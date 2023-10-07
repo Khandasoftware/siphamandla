@@ -1,5 +1,5 @@
-<?php if ( have_rows( 'image_gallery' ) ) : ?>
-	<?php while ( have_rows( 'image_gallery' ) ) : the_row(); ?>
+<?php if ( have_rows( 'vertical_cards' ) ) : ?>
+	<?php while ( have_rows( 'vertical_cards' ) ) : the_row(); ?>
 		<?php the_sub_field( 'title' ); ?>
 		<?php $image = get_sub_field( 'image' ); ?>
 		<?php if ( $image ) : ?>
