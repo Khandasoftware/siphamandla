@@ -199,6 +199,18 @@ function create_custom_post_type() {
             'supports' => array('title', 'editor', 'thumbnail', 'custom-fields'),
         )
     );
+
+    register_post_type('Videos',
+        array(
+            'labels' => array(
+                'name' => __('Videos'),
+                'singular_name' => __('Video')
+            ),
+            'public' => true,
+            'has_archive' => true,
+            'supports' => array('title', 'editor', 'thumbnail', 'custom-fields'),
+        )
+    );
 }
 add_action('init', 'create_custom_post_type');
 
@@ -215,6 +227,8 @@ function create_genre_taxonomy() {
     );
 }
 add_action('init', 'create_genre_taxonomy');
+
+
 
 
 function custom_ajax_handler() {
@@ -376,3 +390,5 @@ function fb_pixel_id_callback() {
     $fb_pixel_id = get_option('fb_pixel_id');
     echo "<input type='text' name='fb_pixel_id' value='$fb_pixel_id' />";
 }
+
+
