@@ -70,6 +70,102 @@ const ajax = $ => {
   });
 };
 
+/***/ }),
+
+/***/ "./js/blocks/accordion.js":
+/*!********************************!*\
+  !*** ./js/blocks/accordion.js ***!
+  \********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   khdAccordion: function() { return /* binding */ khdAccordion; }
+/* harmony export */ });
+const khdAccordion = () => {
+  const acc = document.getElementsByClassName("khd-accordion__button");
+  document.querySelector('body').addEventListener('click', function (e) {
+    const that = e.target;
+    if (!that.classList.contains('khd-accordion__button')) return;
+    for (const i = 0; i < acc.length; i++) {
+      that.classList.toggle("khd-accordion__button--active");
+      const panel = that.nextElementSibling;
+      if (panel.style.maxHeight) panel.style.maxHeight = null;else panel.style.maxHeight = panel.scrollHeight + "px";
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "./js/blocks/popup.js":
+/*!****************************!*\
+  !*** ./js/blocks/popup.js ***!
+  \****************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   khdToggable: function() { return /* binding */ khdToggable; }
+/* harmony export */ });
+function* parents(e, selector) {
+  while (e = e.parentElement) {
+    if (e.matches(selector)) {
+      yield e;
+    }
+  }
+}
+const khdToggable = () => {
+  document.body.addEventListener('click', e => {
+    e.stopPropagation();
+    let clicked = e.target;
+    if (clicked.tagName == "svg") clicked = clicked.parentElement;
+    if (!clicked.hasAttribute("data-toggable_open")) return;
+    const parent = [...parents(e.target, '[data-toggable]')][0];
+    console.log(parent);
+    if (!parent) return;
+    parent.dataset.control = "open";
+  });
+  document.body.addEventListener('click', e => {
+    e.stopPropagation();
+    let clicked = e.target;
+    if (clicked.tagName == "svg") clicked = clicked.parentElement;
+    if (!clicked.hasAttribute("data-toggable_close")) return;
+    const parent = [...parents(e.target, '[data-toggable]')][0];
+    console.log(parent);
+    if (parent) {
+      parent.dataset.control = "close";
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "./js/blocks/tabs.js":
+/*!***************************!*\
+  !*** ./js/blocks/tabs.js ***!
+  \***************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   khdTabs: function() { return /* binding */ khdTabs; }
+/* harmony export */ });
+const khdTabs = () => {
+  const tabs = document.getElementsByClassName("khd-tabs__button");
+  console.log(tabs);
+  document.querySelector('body').addEventListener('click', function (e) {
+    const that = e.target;
+    console.log(that);
+    if (!that.classList.contains('khd-tabs__button')) return;
+    for (const el of document.querySelectorAll('.khd-tabs__button--active')) if (el.classList.contains('khd-tabs__button--active')) el.classList.remove('khd-tabs__button--active');
+    that.classList.toggle("khd-tabs__button--active");
+    const index = Array.from(that.parentElement.children).indexOf(that);
+    const panel = document.querySelectorAll('.khd-tabs__panel')[index];
+    for (const el of document.querySelectorAll('.khd-tabs__panel')) el.style.display = "none";
+    panel.style.display = "block";
+  });
+};
+
 /***/ })
 
 /******/ 	});
@@ -136,9 +232,19 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_ajax_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../js/ajax.js */ "./js/ajax.js");
+/* harmony import */ var _js_blocks_accordion_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../js/blocks/accordion.js */ "./js/blocks/accordion.js");
+/* harmony import */ var _js_blocks_tabs_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../js/blocks/tabs.js */ "./js/blocks/tabs.js");
+/* harmony import */ var _js_blocks_popup_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../js/blocks/popup.js */ "./js/blocks/popup.js");
+
+
+
 
 jQuery(document).ready(function ($) {
   (0,_js_ajax_js__WEBPACK_IMPORTED_MODULE_0__.ajax)($);
+  (0,_js_blocks_accordion_js__WEBPACK_IMPORTED_MODULE_1__.khdAccordion)();
+  (0,_js_blocks_tabs_js__WEBPACK_IMPORTED_MODULE_2__.khdTabs)();
+  new Splide('.splide').mount();
+  (0,_js_blocks_popup_js__WEBPACK_IMPORTED_MODULE_3__.khdToggable)();
 });
 }();
 /******/ })()

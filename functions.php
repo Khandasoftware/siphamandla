@@ -19,7 +19,8 @@ if ( ! defined( '_S_VERSION' ) ) {
  * runs before the init hook. The init hook is too late for some features, such
  * as indicating support for post thumbnails.
  */
-function siphamandla_setup() {
+function siphamandla_setup() 
+{
 	/*
 		* Make theme available for translation.
 		* Translations can be filed in the /languages/ directory.
@@ -119,7 +120,8 @@ add_action( 'after_setup_theme', 'siphamandla_content_width', 0 );
  *
  * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
-function siphamandla_widgets_init() {
+function siphamandla_widgets_init() 
+{
 	register_sidebar(
 		array(
 			'name'          => esc_html__( 'Sidebar', 'siphamandla' ),
@@ -137,9 +139,12 @@ add_action( 'widgets_init', 'siphamandla_widgets_init' );
 /**
  * Enqueue scripts and styles.
  */
-function siphamandla_scripts() {
+function siphamandla_scripts()
+{
 	wp_enqueue_style( 'siphamandla-style', get_stylesheet_uri(), array(), _S_VERSION );
+	wp_enqueue_style( 'siphamandla-simui-style', get_template_directory_uri() .'/css/index.css', array(), _S_VERSION);
 	wp_enqueue_style( 'siphamandla-simui-style', get_template_directory_uri() .'/css/simui.min.css', array(), _S_VERSION );
+	wp_enqueue_style( 'siphamandla-splide-style', get_template_directory_uri() .'/css/splide.min.css', array(), _S_VERSION );
 	wp_style_add_data( 'siphamandla-style', 'rtl', 'replace' );
 
 
@@ -148,7 +153,10 @@ function siphamandla_scripts() {
 
 	wp_enqueue_script( 'siphamandla-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
 	wp_enqueue_script( 'siphamandla-simui', get_template_directory_uri() . '/js/simui.min.js', array(), _S_VERSION, true );
-	wp_enqueue_script('siphamandla-main', get_template_directory_uri() . '/build/index.js', array('jquery'), '1.0', true);
+	wp_enqueue_script( 'siphamandla-fslightbox', get_template_directory_uri() . '/js/fslightbox.js', array('jquery'), _S_VERSION, true );
+	wp_enqueue_script( 'siphamandla-splide', get_template_directory_uri() . '/js/splide.min.js', array(), _S_VERSION, true );
+	wp_enqueue_script('siphamandla-main', get_template_directory_uri() . '/build/index.js', array('jquery','siphamandla-splide','siphamandla-fslightbox'), '1.0', true);
+
 	 // Pass the AJAX URL to the JavaScript
 	 wp_localize_script('siphamandla-main', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
 
@@ -180,215 +188,32 @@ require get_template_directory() . '/inc/template-functions.php';
 require get_template_directory() . '/inc/customizer.php';
 
 /**
+ * ACF based dynamic custom blocks
+ */
+require get_template_directory() . '/inc/custom-blocks.php';
+
+/**
+ * Custom post types and custom taxonomies
+ */
+require get_template_directory() . '/inc/custom-post-types.php';
+
+/**
+ * Custom options
+ */
+require get_template_directory() . '/inc/menus.php';
+
+/**
+ * Ajax
+ */
+require get_template_directory() . '/inc/ajax.php';
+/**
  * Load Jetpack compatibility file.
  */
-if ( defined( 'JETPACK__VERSION' ) ) {
+if ( defined( 'JETPACK__VERSION' ) ) 
+{
 	require get_template_directory() . '/inc/jetpack.php';
 }
 
 
-function create_custom_post_type() {
-    register_post_type('songs',
-        array(
-            'labels' => array(
-                'name' => __('Songs'),
-                'singular_name' => __('Song')
-            ),
-            'public' => true,
-            'has_archive' => true,
-            'supports' => array('title', 'editor', 'thumbnail', 'custom-fields'),
-        )
-    );
-
-    register_post_type('Videos',
-        array(
-            'labels' => array(
-                'name' => __('Videos'),
-                'singular_name' => __('Video')
-            ),
-            'public' => true,
-            'has_archive' => true,
-            'supports' => array('title', 'editor', 'thumbnail', 'custom-fields'),
-        )
-    );
-}
-add_action('init', 'create_custom_post_type');
-
-
-function create_genre_taxonomy() {
-    register_taxonomy(
-        'genres',
-        'songs',
-        array(
-            'label' => __('Genres'),
-            'hierarchical' => true,
-            'rewrite' => array('slug' => 'genre'),
-        )
-    );
-}
-add_action('init', 'create_genre_taxonomy');
-
-
-
-
-function custom_ajax_handler() {
-    // Check if the request is coming from a valid source
-    if ( check_ajax_referer('ajax_nonce', 'ajax_nonce') ) {  
-		
-		// Get the data from the AJAX request
-        $callback = sanitize_text_field( $_POST['callback'] );
-
-		// The function exists, so you can call it dynamically
-		if ( ! ( isset( $callback ) && is_string( $callback ) && function_exists( $callback ) ) )
-			wp_send_json_error( array('message' => 'callback does not exists') );
-
-		// Send a response back to the client
-		$response =[
-			'message' => 'Data received successfully.',
-			'payload' => $callback(),
-		];
-
-		wp_send_json_success( $response );
-        // Always exit to avoid further execution
-    } else {
-        // Invalid nonce, reject the request
-        wp_send_json_error( array('message' => 'Invalid nonce.') );
-    }
-
-	wp_die();
-}  
-function fetchapidata(){
-	return $_POST;
-}
-add_action('wp_ajax_custom_ajax_action', 'custom_ajax_handler');
-add_action('wp_ajax_nopriv_custom_ajax_action', 'custom_ajax_handler');
-
-function custom_theme_customize_register($wp_customize) {
-    // Add a section for colors
-    $wp_customize->add_section('custom_colors', array(
-        'title' => __('Custom Colors', 'custom-theme'),
-        'priority' => 30,
-    ));
-
-    // Primary Color
-    $wp_customize->add_setting('primary_color', array(
-        'default' => '#ff0000', // Default primary color
-        'sanitize_callback' => 'sanitize_hex_color',
-    ));
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'primary_color', array(
-        'label' => __('Primary Color', 'custom-theme'),
-        'section' => 'custom_colors',
-    )));
-
-    // Secondary Color
-    $wp_customize->add_setting('secondary_color', array(
-        'default' => '#00ff00', // Default secondary color
-        'sanitize_callback' => 'sanitize_hex_color',
-    ));
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'secondary_color', array(
-        'label' => __('Secondary Color', 'custom-theme'),
-        'section' => 'custom_colors',
-    )));
-
-    // Text Color
-    $wp_customize->add_setting('text_color', array(
-        'default' => '#000000', // Default text color
-        'sanitize_callback' => 'sanitize_hex_color',
-    ));
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'text_color', array(
-        'label' => __('Text Color', 'custom-theme'),
-        'section' => 'custom_colors',
-    )));
-
-    // Heading Color
-    $wp_customize->add_setting('heading_color', array(
-        'default' => '#333333', // Default heading color
-        'sanitize_callback' => 'sanitize_hex_color',
-    ));
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'heading_color', array(
-        'label' => __('Heading Color', 'custom-theme'),
-        'section' => 'custom_colors',
-    )));
-}
-add_action('customize_register', 'custom_theme_customize_register');
-
-function custom_image_gallery_block() {
-    // Register ACF Block
-    acf_register_block(array(
-        'name'            => 'image-gallery',
-        'title'           => __('Image Gallery', 'your-theme-textdomain'),
-        'description'     => __('A custom image gallery block with ACF fields.', 'your-theme-textdomain'),
-        'render_template' => 'template-parts/blocks/image-gallery.php', // Create this file in your theme
-        'category'        => 'common',
-        'icon'            => 'images-alt2',
-        'keywords'        => array('image', 'gallery', 'acf'),
-        'mode'            => 'edit',
-        'supports'        => array('align' => false),
-    ));
-}
-
-add_action('acf/init', 'custom_image_gallery_block');
-
-
-
-// Add the admin menu item
-function custom_analytics_pixels_menu() {
-    add_menu_page(
-        'Analytics & Pixels',
-        'Analytics & Pixels',
-        'manage_options',
-        'custom_analytics_pixels_settings',
-        'custom_analytics_pixels_page'
-    );
-}
-add_action('admin_menu', 'custom_analytics_pixels_menu');
-
-// Create the options page content
-function custom_analytics_pixels_page() {
-    ?>
-    <div class="wrap">
-        <h2>Analytics & Pixels Settings</h2>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields('custom_analytics_pixels');
-            do_settings_sections('custom_analytics_pixels');
-            submit_button();
-            ?>
-        </form>
-    </div>
-    <?php
-}
-
-// Register and define settings
-function custom_analytics_pixels_settings() {
-    register_setting('custom_analytics_pixels', 'ga_id');
-    register_setting('custom_analytics_pixels', 'fb_pixel_id');
-
-    add_settings_section('analytics_section', 'Google Analytics', 'analytics_section_callback', 'custom_analytics_pixels');
-    add_settings_section('pixel_section', 'Facebook Pixel', 'pixel_section_callback', 'custom_analytics_pixels');
-
-    add_settings_field('ga_id', 'Google Analytics ID', 'ga_id_callback', 'custom_analytics_pixels', 'analytics_section');
-    add_settings_field('fb_pixel_id', 'Facebook Pixel ID', 'fb_pixel_id_callback', 'custom_analytics_pixels', 'pixel_section');
-}
-add_action('admin_init', 'custom_analytics_pixels_settings');
-
-// Callback functions for settings sections and fields
-function analytics_section_callback() {
-    echo 'Enter your Google Analytics ID below:';
-}
-
-function pixel_section_callback() {
-    echo 'Enter your Facebook Pixel ID below:';
-}
-
-function ga_id_callback() {
-    $ga_id = get_option('ga_id');
-    echo "<input type='text' name='ga_id' value='$ga_id' />";
-}
-
-function fb_pixel_id_callback() {
-    $fb_pixel_id = get_option('fb_pixel_id');
-    echo "<input type='text' name='fb_pixel_id' value='$fb_pixel_id' />";
-}
 
 
