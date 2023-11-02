@@ -1,7 +1,7 @@
 /*
 Project Name : Simui
 Description : Simui Pure CSS/JS Web dev frontend Framework
-Autho : Siphamandla Mbokazi
+Autho : levitate Mbokazi
 Version : v1.0
 Licence : MIT Open Source
 */

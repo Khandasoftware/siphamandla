@@ -8,39 +8,39 @@
  *
  * @link https://developer.wordpress.org/themes/functionality/custom-headers/
  *
- * @package Siphamandla
+ * @package levitate
  */
 
 /**
  * Set up the WordPress core custom header feature.
  *
- * @uses siphamandla_header_style()
+ * @uses levitate_header_style()
  */
-function siphamandla_custom_header_setup() {
+function levitate_custom_header_setup() {
 	add_theme_support(
 		'custom-header',
 		apply_filters(
-			'siphamandla_custom_header_args',
+			'levitate_custom_header_args',
 			array(
 				'default-image'      => '',
 				'default-text-color' => '000000',
 				'width'              => 1000,
 				'height'             => 250,
 				'flex-height'        => true,
-				'wp-head-callback'   => 'siphamandla_header_style',
+				'wp-head-callback'   => 'levitate_header_style',
 			)
 		)
 	);
 }
-add_action( 'after_setup_theme', 'siphamandla_custom_header_setup' );
+add_action( 'after_setup_theme', 'levitate_custom_header_setup' );
 
-if ( ! function_exists( 'siphamandla_header_style' ) ) :
+if ( ! function_exists( 'levitate_header_style' ) ) :
 	/**
 	 * Styles the header image and text displayed on the blog.
 	 *
-	 * @see siphamandla_custom_header_setup().
+	 * @see levitate_custom_header_setup().
 	 */
-	function siphamandla_header_style() {
+	function levitate_header_style() {
 		$header_text_color = get_header_textcolor();
 
 		/*

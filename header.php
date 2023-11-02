@@ -6,7 +6,7 @@
  *
  * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
  *
- * @package Siphamandla
+ * @package levitate
  */
 
 ?>
@@ -82,39 +82,42 @@ if ($fb_pixel_id) {
 }
 ?>
 
-
 <div id="page" class="site">
-	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'siphamandla' ); ?></a>
+	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'levitate' ); ?></a>
+	<header id="masthead" class="site-header khd-navigation" data-toggable="close">
+        <div class="khd-navigation__content">
+            <div class="khd-navigation__logo site-branding">
+                <?php
+                the_custom_logo();
+                if ( is_front_page() && is_home() ) :
+                    ?>
+                    <h1 class="site-title khd-navigation__site-title"><a class="khd-navigation__logo-link"  href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
+                    <?php
+                else :
+                    ?>
+                    <p class="site-title khd-navigation__site-title"><a class="khd-navigation__logo-link" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
+                    <?php
+                endif;
+                $levitate_description = get_bloginfo( 'description', 'display' );
+                if ( $levitate_description || is_customize_preview() ) :
+                    ?>
+                    <p class="site-description"><?php echo $levitate_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+                <?php endif; ?>
+            </div><!-- .site-branding -->
 
-	<header id="masthead" class="site-header">
-		<div class="site-branding">
-			<?php
-			the_custom_logo();
-			if ( is_front_page() && is_home() ) :
-				?>
-				<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
-				<?php
-			else :
-				?>
-				<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
-				<?php
-			endif;
-			$siphamandla_description = get_bloginfo( 'description', 'display' );
-			if ( $siphamandla_description || is_customize_preview() ) :
-				?>
-				<p class="site-description"><?php echo $siphamandla_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-			<?php endif; ?>
-		</div><!-- .site-branding -->
-
-		<nav id="site-navigation" class="main-navigation">
-			<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false"><?php esc_html_e( 'Primary Menu', 'siphamandla' ); ?></button>
-			<?php
-			wp_nav_menu(
-				array(
-					'theme_location' => 'menu-1',
-					'menu_id'        => 'primary-menu',
-				)
-			);
-			?>
-		</nav><!-- #site-navigation -->
+            <nav id="site-navigation" class="khd-navigation__track">
+                <?php
+                wp_nav_menu(
+                    array(
+                        'theme_location' => 'menu-1',
+                        'menu_id'        => 'primary-menu',
+                        'menu_class'     =>'khd-navigation__list'
+                    )
+                );
+                ?>
+            </nav><!-- #site-navigation -->
+            <aside class="khd-navigation__controls" data-class="khd-navigation__controls" data-name="Toggle">
+                <button class="khd-navigation__button" data-class="khd-navigation__button" data-name="Button" data-toggle>
+            </button>
+        </aside>
 	</header><!-- #masthead -->

@@ -1,8 +1,2 @@
-@import url('blocks/accordion.css');
-@import url('blocks/tabs.css');
-@import url('blocks/hero-banner.css');
-@import url('blocks/horizontal-card.css');
-@import url('blocks/vertical-cards.css');
-@import url('blocks/popup.css');
-@import url('blocks/dropdown.css');
-@import url('blocks/gallery.css');
+@import url('navigation.css');
+
